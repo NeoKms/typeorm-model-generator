@@ -248,10 +248,10 @@ export default class PostgresDriver extends AbstractDriver {
                 ret.tsType = "number";
                 break;
             case "bigint":
-                ret.tsType = "string";
+                ret.tsType = "number";
                 break;
             case "decimal":
-                ret.tsType = "string";
+                ret.tsType = "number";
                 break;
             case "numeric":
                 ret.tsType = "string";

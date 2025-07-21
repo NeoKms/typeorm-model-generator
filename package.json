@@ -36,7 +36,6 @@
     "pluralize": "^8.0.0",
     "prettier": "^2.3.2",
     "reflect-metadata": "^0.1.13",
-    "sqlite3": "^5.0.2",
     "typeorm": "^0.2.37",
     "yargs": "^16.2.0"
   },

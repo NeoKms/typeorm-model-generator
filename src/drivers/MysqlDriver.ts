@@ -146,7 +146,7 @@ export default class MysqlDriver extends AbstractDriver {
                             tscType = "number";
                             break;
                         case "bigint":
-                            tscType = "string";
+                            tscType = "number";
                             break;
                         case "float":
                             tscType = "number";
@@ -155,7 +155,7 @@ export default class MysqlDriver extends AbstractDriver {
                             tscType = "number";
                             break;
                         case "decimal":
-                            tscType = "string";
+                            tscType = "number";
                             break;
                         case "date":
                             tscType = "string";

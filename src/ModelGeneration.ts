@@ -148,7 +148,9 @@ function removeUnusedImports(rendered: string) {
     const distinctImports = imports.filter(
         (v) =>
             restOfEntityDefinition.indexOf(`@${v}(`) !== -1 ||
-            (v === "BaseEntity" && restOfEntityDefinition.indexOf(v) !== -1)
+            (v === "BaseEntity" && restOfEntityDefinition.indexOf(v) !== -1) ||
+            (v === "Relation" &&
+                restOfEntityDefinition.indexOf(`Relation<`) !== -1)
     );
     return `${rendered.substring(0, openBracketIndex)}${distinctImports.join(
         ","
@@ -231,7 +233,7 @@ function createHandlebarsHelpers(generationOptions: IGenerationOptions): void {
                 retVal = `${retVal}[]`;
             }
             if (generationOptions.lazy) {
-                retVal = `Promise<${retVal}>`;
+                retVal = `Relation<${retVal}>`;
             }
             return retVal;
         }

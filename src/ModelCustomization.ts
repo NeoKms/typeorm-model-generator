@@ -89,6 +89,7 @@ export default function modelCustomizationPhase(
     }
     namingStrategy.enablePluralization(generationOptions.pluralizeNames);
     let retVal = removeIndicesGeneratedByTypeorm(dbModel);
+    retVal = addPrimaryKeyForKeylessEntities(retVal);
     retVal = removeColumnsInRelation(dbModel);
     retVal = applyNamingStrategy(namingStrategy, dbModel);
     retVal = addImportsAndGenerationOptions(retVal, generationOptions);
@@ -136,6 +137,23 @@ function removeIndicesGeneratedByTypeorm(dbModel: Entity[]): Entity[] {
                     (v) => v.name !== idxName && v.name !== fkName
                 );
             });
+    });
+    return dbModel;
+}
+function addPrimaryKeyForKeylessEntities(dbModel: Entity[]): Entity[] {
+    dbModel.forEach((entity) => {
+        const havePrimary = entity.columns.some((col) => col.primary);
+        if (!havePrimary) {
+            entity.columns.unshift({
+                generated: true,
+                type: "integer",
+                default: undefined,
+                options: { name: "fakeId", width: undefined },
+                tscName: "fakeId",
+                tscType: "number",
+                primary: true,
+            });
+        }
     });
     return dbModel;
 }
@@ -228,7 +246,7 @@ function addImportsAndGenerationOptions(
                 if (!relation.relationOptions) {
                     relation.relationOptions = {};
                 }
-                relation.relationOptions.lazy = true;
+                relation.relationOptions.lazy = false;
             }
         });
         if (generationOptions.skipSchema) {
@@ -339,7 +357,6 @@ function applyNamingStrategy(
                         column2 === oldName ? newName : column2
                     );
                 });
-
                 column.tscName = newName;
             });
         });
