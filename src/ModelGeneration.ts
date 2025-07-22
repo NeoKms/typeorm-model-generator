@@ -217,7 +217,9 @@ function createHandlebarsHelpers(generationOptions: IGenerationOptions): void {
                 retStr = changeCase.camelCase(str);
                 break;
             case "pascal":
+                const customEnding = str[str.length - 1] === "_";
                 retStr = changeCase.pascalCase(str);
+                retStr = customEnding ? `${retStr}_` : retStr;
                 break;
             case "none":
                 retStr = str;

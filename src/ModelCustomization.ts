@@ -162,6 +162,7 @@ function removeColumnsInRelation(dbModel: Entity[]): Entity[] {
         entity.columns = entity.columns.filter(
             (col) =>
                 !col.isUsedInRelationAsOwner ||
+                col.isUsedInRelationAsOwner ||
                 col.isUsedInRelationAsReferenced ||
                 entity.indices.some((idx) =>
                     idx.columns.some((v) => v === col.tscName)
