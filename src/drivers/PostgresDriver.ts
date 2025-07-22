@@ -176,14 +176,17 @@ export default class PostgresDriver extends AbstractDriver {
                     case when column_default LIKE 'nextval%' then 'YES' else 'NO' end isidentity,
                     is_identity,
         			(SELECT count(*)
-            FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
-                inner join INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE cu
-                    on cu.CONSTRAINT_NAME = tc.CONSTRAINT_NAME
-            where
-                tc.CONSTRAINT_TYPE = 'UNIQUE'
-                and tc.TABLE_NAME = c.TABLE_NAME
-                and cu.COLUMN_NAME = c.COLUMN_NAME
-                and tc.TABLE_SCHEMA=c.TABLE_SCHEMA) IsUnique,
+                     FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
+                              inner join INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE cu
+                                         on cu.CONSTRAINT_NAME = tc.CONSTRAINT_NAME
+                     where tc.CONSTRAINT_TYPE = 'UNIQUE'
+                       and tc.TABLE_NAME = c.TABLE_NAME
+                       and cu.COLUMN_NAME = c.COLUMN_NAME
+                       and tc.TABLE_SCHEMA = c.TABLE_SCHEMA
+                       AND (SELECT COUNT(*)
+                            FROM information_schema.constraint_column_usage cu
+                            WHERE cu.constraint_name = tc.constraint_name
+                              AND cu.table_schema = tc.table_schema) = 1) IsUnique,
                 (SELECT
         string_agg(enumlabel, ',')
         FROM "pg_enum" "e"
@@ -264,7 +267,10 @@ export default class PostgresDriver extends AbstractDriver {
                             (v) => v === columnType
                         )
                     ) {
-                        if (resp.numeric_precision !== null) {
+                        if (
+                            resp.data_type !== "real" &&
+                            resp.numeric_precision !== null
+                        ) {
                             options.precision = resp.numeric_precision;
                         }
                         if (resp.numeric_scale !== null) {
