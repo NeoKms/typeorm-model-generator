@@ -10,6 +10,7 @@ export type Entity = {
 
     database?: string;
     schema?: string;
+    comment?: string;
 
     columns: Column[];
     relationIds: RelationId[];

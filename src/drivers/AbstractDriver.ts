@@ -205,7 +205,7 @@ export default abstract class AbstractDriver {
             connectionOptions.skipTables,
             connectionOptions.onlyTables
         );
-        // console.log(JSON.stringify(dbModel.find(m=>m.sqlName==='users')?.checks,null,2));
+        // console.log(JSON.stringify(dbModel.find(m=>m.sqlName==='users'),null,2));
         return dbModel;
     }
 

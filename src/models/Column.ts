@@ -7,6 +7,7 @@ export type Column = {
     isUsedInRelationAsOwner?: true; // TODO: move to separate object/calulate when us
     isUsedInRelationAsReferenced?: true; // TODO: move to separate object/calulate when us
 
+    comment?: string;
     primary?: boolean;
     generated?: true | "increment" | "uuid";
     default?: string; // ?

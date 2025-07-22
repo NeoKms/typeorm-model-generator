@@ -46,11 +46,26 @@ export default class PostgresDriver extends AbstractDriver {
             TABLE_SCHEMA: string;
             TABLE_NAME: string;
             DB_NAME: string;
+            table_comment: string;
         }[] = (
             await this.Connection.query(
-                `SELECT table_schema as "TABLE_SCHEMA",table_name as "TABLE_NAME", table_catalog as "DB_NAME" FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND table_schema in (${PostgresDriver.buildEscapedObjectList(
-                    schemas
-                )})`
+                `SELECT T
+                            .table_schema AS "TABLE_SCHEMA",
+                        T.TABLE_NAME      AS "TABLE_NAME",
+                        T.table_catalog   AS "DB_NAME",
+                        d.description     AS table_comment
+                 FROM INFORMATION_SCHEMA.TABLES
+                          AS T
+                          LEFT JOIN pg_class AS cls ON cls.relname = T.TABLE_NAME
+                     AND cls.relkind = 'r'
+                          LEFT JOIN pg_namespace AS ns ON ns.OID = cls.relnamespace
+                     AND ns.nspname = T.table_schema
+                          LEFT JOIN pg_description AS d ON d.objoid = cls.OID
+                     AND d.objsubid = 0
+                 WHERE t.TABLE_TYPE = 'BASE TABLE'
+                   AND t.table_schema in (${PostgresDriver.buildEscapedObjectList(
+                       schemas
+                   )})`
             )
         ).rows;
         const ret: Entity[] = [];
@@ -66,6 +81,7 @@ export default class PostgresDriver extends AbstractDriver {
                 fileName: val.TABLE_NAME,
                 database: dbNames.length > 1 ? val.DB_NAME : "",
                 schema: val.TABLE_SCHEMA,
+                comment: val.table_comment || "",
                 fileImports: [],
             });
         });
@@ -151,11 +167,12 @@ export default class PostgresDriver extends AbstractDriver {
             is_identity: string; // reccommended INDENTITY type for pg > 10
             isunique: string;
             enumvalues: string | null;
+            comment: string | null;
             /* eslint-enable camelcase */
         }[] = (
             await this.Connection
                 .query(`SELECT table_name,column_name,udt_name,column_default,is_nullable,
-                    data_type,character_maximum_length,numeric_precision,numeric_scale,
+                    data_type,character_maximum_length,numeric_precision,numeric_scale,d.description AS comment,
                     case when column_default LIKE 'nextval%' then 'YES' else 'NO' end isidentity,
                     is_identity,
         			(SELECT count(*)
@@ -175,6 +192,12 @@ export default class PostgresDriver extends AbstractDriver {
         WHERE "n"."nspname" = table_schema AND "t"."typname"=udt_name
                 ) enumValues
                     FROM INFORMATION_SCHEMA.COLUMNS c
+                     LEFT JOIN pg_class cls
+                               ON cls.relname = c.table_name AND cls.relkind = 'r'
+                     LEFT JOIN pg_attribute attr
+                               ON attr.attrelid = cls.oid AND attr.attname = c.column_name
+                     LEFT JOIN pg_description as d
+                               ON d.objoid = cls.oid AND d.objsubid = attr.attnum
                     where table_schema in (${PostgresDriver.buildEscapedObjectList(
                         schemas
                     )})
@@ -187,6 +210,7 @@ export default class PostgresDriver extends AbstractDriver {
                     const tscName = resp.column_name;
                     const options: Column["options"] = {
                         name: resp.column_name,
+                        comment: resp.comment || undefined,
                     };
                     if (resp.is_nullable === "YES") options.nullable = true;
                     if (resp.isunique === "1") options.unique = true;
