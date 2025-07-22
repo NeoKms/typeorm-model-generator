@@ -12,6 +12,13 @@ import IGenerationOptions from "../IGenerationOptions";
 import { RelationInternal } from "../models/RelationInternal";
 
 export default class MssqlDriver extends AbstractDriver {
+    public async GetChecksFromEntity(
+        entities: Entity[],
+        schemas: string[],
+        dbNames: string[]
+    ): Promise<Entity[]> {
+        return entities;
+    }
     public defaultValues: DataTypeDefaults = new TypeormDriver.SqlServerDriver({
         options: { replication: undefined } as ConnectionOptions,
     } as any).dataTypeDefaults;
@@ -62,6 +69,7 @@ export default class MssqlDriver extends AbstractDriver {
             ret.push({
                 columns: [],
                 indices: [],
+                checks: [],
                 relations: [],
                 relationIds: [],
                 sqlName: val.TABLE_NAME,

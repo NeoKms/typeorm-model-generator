@@ -2,6 +2,7 @@ import { Column } from "./Column";
 import { Relation } from "./Relation";
 import { Index } from "./Index";
 import { RelationId } from "./RelationId";
+import { Check } from "./Check";
 
 export type Entity = {
     sqlName: string;
@@ -14,6 +15,7 @@ export type Entity = {
     relationIds: RelationId[];
     relations: Relation[];
     indices: Index[];
+    checks: Check[];
     // TODO: move to sub-object or use handlebars helpers(?)
     fileName: string;
     fileImports: {

@@ -46,6 +46,7 @@ describe("Model customization phase", async () => {
                     primary: true
                 }
             ],
+            checks: [],
             relations: [
                 {
                     fieldName: "Post",
@@ -98,6 +99,7 @@ describe("Model customization phase", async () => {
                     primary: true
                 }
             ],
+            checks: [],
             relations: [
                 {
                     fieldName: "authorId",

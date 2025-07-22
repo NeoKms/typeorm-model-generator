@@ -10,6 +10,7 @@ import { Column } from "../models/Column";
 import { Index } from "../models/Index";
 import IGenerationOptions from "../IGenerationOptions";
 import { RelationInternal } from "../models/RelationInternal";
+import { Check } from "../models/Check";
 
 export default class PostgresDriver extends AbstractDriver {
     public defaultValues: DataTypeDefaults = new TypeormDriver.PostgresDriver({
@@ -57,6 +58,7 @@ export default class PostgresDriver extends AbstractDriver {
             ret.push({
                 columns: [],
                 indices: [],
+                checks: [],
                 relations: [],
                 relationIds: [],
                 sqlName: val.TABLE_NAME,
@@ -68,6 +70,66 @@ export default class PostgresDriver extends AbstractDriver {
             });
         });
         return ret;
+    }
+
+    public async GetChecksFromEntity(
+        entities: Entity[],
+        schemas: string[],
+        dbNames: string[]
+    ): Promise<Entity[]> {
+        const response: {
+            tablename: string;
+            constraintname: string;
+            definition: string;
+        }[] = (
+            await this.Connection.query(`SELECT
+                                             conname AS constraintname,
+                                             pg_get_constraintdef(c.oid) AS definition,
+                                             t.relname as tablename
+                                         FROM pg_constraint c
+                                                  JOIN pg_class t ON c.conrelid = t.oid
+                                                  JOIN pg_namespace n ON t.relnamespace = n.oid
+                                         WHERE contype = 'c'
+                                           AND n.nspname in (${PostgresDriver.buildEscapedObjectList(
+                                               schemas
+                                           )});`)
+        ).rows;
+        entities.forEach((ent) => {
+            const entityChecks = response.filter(
+                (filterVal) => filterVal.tablename === ent.tscName
+            );
+            entityChecks.forEach((check) => {
+                const checkInfo: Check = {
+                    name: check.constraintname,
+                    definition: this.stripCheckWrapperAndParens(
+                        check.definition
+                    ),
+                };
+                ent.checks.push(checkInfo);
+            });
+        });
+        return entities;
+    }
+
+    private stripCheckWrapperAndParens(checkDefinition: string): string {
+        let str = checkDefinition.trim();
+
+        // Удалить префикс "CHECK ("
+        if (str.startsWith("CHECK (")) {
+            str = str.slice(6).trim(); // удалили "CHECK"
+        }
+
+        // Удалить первую и последнюю скобку
+        if (str.startsWith("(") && str.endsWith(")")) {
+            str = str.slice(1, -1).trim();
+        }
+
+        // Повторно — если снова есть обёрточные скобки (например, было "(((...)))")
+        if (str.startsWith("(") && str.endsWith(")")) {
+            str = str.slice(1, -1).trim();
+        }
+
+        return str;
     }
 
     public async GetCoulmnsFromEntity(

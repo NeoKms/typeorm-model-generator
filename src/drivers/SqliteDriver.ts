@@ -12,6 +12,14 @@ import IGenerationOptions from "../IGenerationOptions";
 import { RelationInternal } from "../models/RelationInternal";
 
 export default class SqliteDriver extends AbstractDriver {
+    public async GetChecksFromEntity(
+        entities: Entity[],
+        schemas: string[],
+        dbNames: string[]
+    ): Promise<Entity[]> {
+        return entities;
+    }
+
     public defaultValues: DataTypeDefaults = new TypeormDriver.SqliteDriver({
         options: { database: "true" } as ConnectionOptions,
     } as any).dataTypeDefaults;
@@ -62,6 +70,7 @@ export default class SqliteDriver extends AbstractDriver {
             ret.push({
                 columns: [],
                 indices: [],
+                checks: [],
                 relations: [],
                 relationIds: [],
                 sqlName: val.tbl_name,

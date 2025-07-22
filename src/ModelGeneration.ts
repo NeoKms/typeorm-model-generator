@@ -150,7 +150,8 @@ function removeUnusedImports(rendered: string) {
             restOfEntityDefinition.indexOf(`@${v}(`) !== -1 ||
             (v === "BaseEntity" && restOfEntityDefinition.indexOf(v) !== -1) ||
             (v === "Relation" &&
-                restOfEntityDefinition.indexOf(`Relation<`) !== -1)
+                restOfEntityDefinition.indexOf(`Relation<`) !== -1) ||
+            (v === "Check" && restOfEntityDefinition.indexOf(`Check(`) !== -1)
     );
     return `${rendered.substring(0, openBracketIndex)}${distinctImports.join(
         ","

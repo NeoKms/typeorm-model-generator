@@ -186,6 +186,11 @@ export default abstract class AbstractDriver {
             connectionOptions.schemaNames,
             connectionOptions.databaseNames
         );
+        await this.GetChecksFromEntity(
+            dbModel,
+            connectionOptions.schemaNames,
+            connectionOptions.databaseNames
+        );
         AbstractDriver.FindPrimaryColumnsFromIndexes(dbModel);
         dbModel = await this.GetRelations(
             dbModel,
@@ -200,6 +205,7 @@ export default abstract class AbstractDriver {
             connectionOptions.skipTables,
             connectionOptions.onlyTables
         );
+        // console.log(JSON.stringify(dbModel.find(m=>m.sqlName==='users')?.checks,null,2));
         return dbModel;
     }
 
@@ -384,6 +390,12 @@ export default abstract class AbstractDriver {
     ): Promise<Entity[]>;
 
     public abstract GetIndexesFromEntity(
+        entities: Entity[],
+        schemas: string[],
+        dbNames: string[]
+    ): Promise<Entity[]>;
+
+    public abstract GetChecksFromEntity(
         entities: Entity[],
         schemas: string[],
         dbNames: string[]
