@@ -509,7 +509,6 @@ export default class PostgresDriver extends AbstractDriver {
                 ent.indices.push(indexInfo);
             });
         });
-
         return entities;
     }
 
@@ -530,6 +529,7 @@ export default class PostgresDriver extends AbstractDriver {
             onupdate: "RESTRICT" | "CASCADE" | "SET NULL" | "NO ACTION";
             // eslint-disable-next-line camelcase
             object_id: string;
+            fkname: string;
             // Distinct because of note in https://www.postgresql.org/docs/9.1/information-schema.html
         }[] = (
             await this.Connection.query(`SELECT DISTINCT
@@ -540,7 +540,8 @@ export default class PostgresDriver extends AbstractDriver {
               att.attname AS foreignkeycolumnreferenced,
               delete_rule as ondelete,
               update_rule as onupdate,
-                concat(con.conname,con.conrelid,con.confrelid) as object_id
+                concat(con.conname,con.conrelid,con.confrelid) as object_id,
+              con.conname as fkname
                FROM (
                    SELECT
                      unnest(con1.conkey) AS parent,
@@ -597,6 +598,7 @@ export default class PostgresDriver extends AbstractDriver {
             const internal: RelationInternal = {
                 ownerColumns: [],
                 relatedColumns: [],
+                fkname: rows[0].fkname,
                 ownerTable,
                 relatedTable,
             };

@@ -10,7 +10,7 @@ import {{localImport (toEntityName entityName)}} from './{{toFileName fileName}}
 
 {{/inline}}
 {{#*inline "JoinColumnOptions"}}
-{ name: "{{name}}", referencedColumnName: "{{toPropertyName referencedColumnName}}" },
+{ name: "{{name}}", referencedColumnName: "{{toPropertyName referencedColumnName}}", foreignKeyConstraintName: "{{foreignKeyConstraintName}}" },
 {{/inline}}
 {{#*inline "Relation"}}
 @{{relationType}}(()=>{{toEntityName relatedTable}},{{toPropertyName relatedTable}}=>{{toPropertyName relatedTable}}.{{toPropertyName relatedField}}{{#if relationOptions}},{ {{json relationOptions}} }{{/if}})

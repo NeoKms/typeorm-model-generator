@@ -423,6 +423,7 @@ export default class MysqlDriver extends AbstractDriver {
             const internal: RelationInternal = {
                 ownerColumns: [],
                 relatedColumns: [],
+                fkname: "",
                 ownerTable,
                 relatedTable,
             };

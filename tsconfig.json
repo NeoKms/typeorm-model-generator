@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2017",
+    "target": "ES2021",
     "noImplicitAny": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -15,9 +15,10 @@
     "newLine": "LF",
     "outDir": "dist",
     "lib": [
-      "es2019",
-      "es2019.array"
+      "ES2021",
+      "DOM"
     ],
+    "types": ["node", "mocha"],
     "typeRoots": [
       "./node_modules/@types"
     ],

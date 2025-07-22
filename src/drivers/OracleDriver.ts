@@ -328,6 +328,7 @@ export default class OracleDriver extends AbstractDriver {
             const internal: RelationInternal = {
                 ownerColumns: [],
                 relatedColumns: [],
+                fkname: "",
                 ownerTable,
                 relatedTable,
             };

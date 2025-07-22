@@ -7,6 +7,7 @@ export type RelationInternal = {
     relatedTable: Entity;
     ownerColumns: string[];
     relatedColumns: string[];
+    fkname: string;
     onDelete?: OnDeleteType;
     onUpdate?: OnUpdateType;
 };
