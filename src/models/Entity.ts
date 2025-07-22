@@ -11,6 +11,7 @@ export type Entity = {
     database?: string;
     schema?: string;
     comment?: string;
+    synchronize?: boolean;
 
     columns: Column[];
     relationIds: RelationId[];

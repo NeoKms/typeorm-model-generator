@@ -144,6 +144,7 @@ function addPrimaryKeyForKeylessEntities(dbModel: Entity[]): Entity[] {
     dbModel.forEach((entity) => {
         const havePrimary = entity.columns.some((col) => col.primary);
         if (!havePrimary) {
+            entity.synchronize = false;
             entity.columns.unshift({
                 generated: true,
                 type: "integer",

@@ -164,6 +164,9 @@ function createHandlebarsHelpers(generationOptions: IGenerationOptions): void {
         const withoutQuotes = json.replace(/"([^(")"]+)":/g, "$1:");
         return withoutQuotes.slice(1, withoutQuotes.length - 1);
     });
+    Handlebars.registerHelper("hasProperty", function (obj, key) {
+        return Object.prototype.hasOwnProperty.call(obj, key);
+    });
     Handlebars.registerHelper("escapeJs", function (str) {
         if (typeof str !== "string") return str;
         return str.replace(/\\/g, "\\\\").replace(/"/g, '\\"');

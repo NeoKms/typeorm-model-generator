@@ -36,10 +36,11 @@ import {{localImport (toEntityName entityName)}} from './{{toFileName fileName}}
 {{#*inline "Entity"}}
 {{#indices}}{{> Index}}{{/indices~}}
 {{#checks}}{{> Check}}{{/checks~}}
-@Entity("{{sqlName}}"{{#if (or schema database comment)}} , {
+@Entity("{{sqlName}}"{{#if (or schema database comment (hasProperty this "synchronize"))}} , {
   {{#if schema}}schema: "{{schema}}"{{/if}}
   {{#if database}}{{#if schema}}, {{/if}}database: "{{database}}"{{/if}}
   {{#if comment}}{{#if (or schema database)}}, {{/if}}comment: "{{escapeJs comment}}"{{/if}}
+  {{#if (hasProperty this "synchronize")}}{{#if (or schema database comment)}}, {{/if}}synchronize: {{synchronize}}{{/if}}
 }{{/if}})
 export {{defaultExport}} class {{toEntityName tscName}}{{#activeRecord}} extends BaseEntity{{/activeRecord}} {
 
