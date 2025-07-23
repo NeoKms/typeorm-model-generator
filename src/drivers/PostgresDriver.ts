@@ -549,6 +549,7 @@ export default class PostgresDriver extends AbstractDriver {
             tablename: string;
             indexname: string;
             columnname: string;
+            indextype: string | null;
             // eslint-disable-next-line camelcase
             is_unique: number;
             // eslint-disable-next-line camelcase
@@ -558,6 +559,7 @@ export default class PostgresDriver extends AbstractDriver {
         c.relname AS tablename,
         i.relname as indexname,
         f.attname AS columnname,
+        con.contype as indextype,
         CASE
             WHEN ix.indisunique = true THEN 1
             ELSE 0
@@ -573,6 +575,7 @@ export default class PostgresDriver extends AbstractDriver {
         LEFT JOIN pg_namespace n ON n.oid = c.relnamespace
         LEFT JOIN pg_index AS ix ON f.attnum = ANY(ix.indkey) and c.oid = f.attrelid and c.oid = ix.indrelid
         LEFT JOIN pg_class AS i ON ix.indexrelid = i.oid
+        LEFT JOIN pg_constraint con ON con.conindid = i.oid
         WHERE c.relkind = 'r'::char
         AND n.nspname in (${PostgresDriver.buildEscapedObjectList(schemas)})
         AND f.attnum > 0
@@ -592,6 +595,7 @@ export default class PostgresDriver extends AbstractDriver {
                     columns: [],
                     options: {},
                     name: records[0].indexname,
+                    base: records[0].indextype === null,
                 };
                 if (records[0].is_primary_key === 1) indexInfo.primary = true;
                 if (records[0].is_unique === 1) indexInfo.options.unique = true;

@@ -273,6 +273,7 @@ export default class OracleDriver extends AbstractDriver {
                     columns: [],
                     options: {},
                     name: records[0].INDEX_NAME,
+                    base: true,
                 };
                 if (records[0].ISPRIMARYKEY === 1) indexInfo.primary = true;
                 if (records[0].UNIQUENESS === "UNIQUE")

@@ -289,6 +289,7 @@ export default class SqliteDriver extends AbstractDriver {
                             name: resp.name,
                             columns: [],
                             options: {},
+                            base: true,
                         };
                         if (resp.unique === 1) indexInfo.options.unique = true;
 

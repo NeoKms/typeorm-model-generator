@@ -42,6 +42,7 @@ describe("Model customization phase", async () => {
                 {
                     columns: ["id"],
                     options: { unique: true },
+                    base: true,
                     name: "PK_6571d08cfb2f1ab06c3aab425a6",
                     primary: true
                 }
@@ -90,11 +91,13 @@ describe("Model customization phase", async () => {
                 {
                     columns: ["authorId"],
                     options: { unique: true },
+                    base: true,
                     name: "REL_cef8d6e8edb69c82e5f10bb402"
                 },
                 {
                     columns: ["id"],
                     options: { unique: true },
+                    base: true,
                     name: "PK_c4d3b3dcd73db0b0129ea829f9f",
                     primary: true
                 }

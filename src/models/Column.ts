@@ -23,5 +23,6 @@ export type Column = {
         enum?: string[];
         array?: boolean; // ?
         comment?: string;
+        primaryKeyConstraintName?: string;
     };
 };

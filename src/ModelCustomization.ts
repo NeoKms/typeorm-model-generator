@@ -94,6 +94,7 @@ export default function modelCustomizationPhase(
     retVal = applyNamingStrategy(namingStrategy, dbModel);
     retVal = addImportsAndGenerationOptions(retVal, generationOptions);
     retVal = removeColumnDefaultProperties(retVal, defaultValues);
+    retVal = removePrimaryIndex(retVal);
     return retVal;
 }
 function removeIndicesGeneratedByTypeorm(dbModel: Entity[]): Entity[] {
@@ -158,6 +159,30 @@ function addPrimaryKeyForKeylessEntities(dbModel: Entity[]): Entity[] {
     });
     return dbModel;
 }
+
+function removePrimaryIndex(dbModel: Entity[]): Entity[] {
+    dbModel.forEach((entity) => {
+        const primaryCol = entity.columns.find((col) => col.primary);
+        const allPrimaryIndexes = entity.indices.filter((i) => i.primary);
+        if (allPrimaryIndexes.length > 1) {
+            throw new Error(
+                "multiple primary indexes found in entity " + entity.tscName
+            );
+        }
+        if (primaryCol && allPrimaryIndexes[0]) {
+            entity.indices = entity.indices.filter((i) => !i.primary);
+
+            const multiplePrimaryCols =
+                entity.columns.filter((col) => col.primary).length > 1;
+            if (!multiplePrimaryCols) {
+                primaryCol.options.primaryKeyConstraintName =
+                    allPrimaryIndexes[0].name;
+            }
+        }
+    });
+    return dbModel;
+}
+
 function removeColumnsInRelation(dbModel: Entity[]): Entity[] {
     dbModel.forEach((entity) => {
         entity.columns = entity.columns.filter(

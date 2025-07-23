@@ -1,5 +1,9 @@
 {{#*inline "Index"}}
-@Index("{{name}}",[{{#columns}}"{{toPropertyName .}}",{{/columns~}}],{ {{json options}} })
+{{#andNot options.unique base}}
+@Unique("{{name}}", [{{#columns}}"{{toPropertyName .}}",{{/columns}}])
+{{else}}
+@Index("{{name}}", [{{#columns}}"{{toPropertyName .}}",{{/columns}}], { {{json options}} })
+{{/andNot}}
 {{/inline}}
 {{#*inline "Check"}}
 @Check("{{name}}","{{definition}}")
@@ -8,7 +12,7 @@
 import {{localImport (toEntityName entityName)}} from './{{toFileName fileName}}'
 {{/inline}}
 {{#*inline "Column"}}
-{{#generated}}@PrimaryGeneratedColumn({ type:"{{type}}", {{/generated}}{{^generated}}@Column("{{type}}",{ {{#primary}}primary:{{primary}},{{/primary}}{{/generated}}{{json options}}{{#default}},default: {{.}},{{/default}} })
+{{#if (and primary generated)}}@PrimaryGeneratedColumn({ type: "{{type}}", {{else if primary}}@PrimaryColumn({ type: "{{type}}", {{else}}@Column("{{type}}",{ {{/if}}{{json options}}{{#default}},default: {{.}},{{/default}} })
 {{printPropertyVisibility}}{{toPropertyName tscName}}{{strictMode}}:{{tscType}}{{#if options.nullable}} | null{{/if}};
 
 {{/inline}}
@@ -50,7 +54,7 @@ export {{defaultExport}} class {{toEntityName tscName}}{{#activeRecord}} extends
 {{#if generateConstructor}}{{>Constructor entityName=tscName}}{{/if~}}
 }
 {{/inline}}
-import {BaseEntity,Column,Entity,Index,JoinColumn,JoinTable,ManyToMany,ManyToOne,OneToMany,OneToOne,PrimaryColumn,PrimaryGeneratedColumn,RelationId,Relation,Check} from "typeorm";
+import {BaseEntity,Column,Entity,Index,JoinColumn,JoinTable,ManyToMany,ManyToOne,OneToMany,OneToOne,PrimaryColumn,PrimaryGeneratedColumn,RelationId,Relation,Check,Unique} from "typeorm";
 {{#fileImports}}{{> Import}}{{/fileImports}}
 
 {{> Entity}}

@@ -167,6 +167,27 @@ function createHandlebarsHelpers(generationOptions: IGenerationOptions): void {
     Handlebars.registerHelper("hasProperty", function (obj, key) {
         return Object.prototype.hasOwnProperty.call(obj, key);
     });
+    Handlebars.registerHelper("not", function (value) {
+        return !value;
+    });
+    Handlebars.registerHelper("and", function (...args) {
+        const options = args.pop();
+        return args.every(Boolean);
+    });
+    Handlebars.registerHelper("or", function (...args) {
+        const options = args.pop();
+        return args.some(Boolean);
+    });
+    Handlebars.registerHelper(
+        "andNot",
+        function (a: any, b: any, options: any) {
+            if (a && !b) {
+                return options.fn(this);
+            } else {
+                return options.inverse(this);
+            }
+        }
+    );
     Handlebars.registerHelper("escapeJs", function (str) {
         if (typeof str !== "string") return str;
         return str.replace(/\\/g, "\\\\").replace(/"/g, '\\"');

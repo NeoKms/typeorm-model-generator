@@ -342,6 +342,7 @@ export default class MssqlDriver extends AbstractDriver {
                     columns: [],
                     options: {},
                     name: records[0].IndexName,
+                    base: true,
                 };
                 if (records[0].is_primary_key) indexInfo.primary = true;
                 if (records[0].is_unique) indexInfo.options.unique = true;

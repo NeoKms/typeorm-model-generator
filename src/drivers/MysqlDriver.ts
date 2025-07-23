@@ -359,6 +359,7 @@ export default class MysqlDriver extends AbstractDriver {
                     name: indexName,
                     columns: [],
                     options: {},
+                    base: true,
                 };
                 if (records[0].is_primary_key === 1) indexInfo.primary = true;
                 if (records[0].is_fulltext === 1)
