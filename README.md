@@ -1,3 +1,24 @@
+# Changes
+
+All changes only for a postgres driver
+
+- up: "typeorm" 0.2.37 -> 0.3.25
+- up: "typescript" 4.4.2 -> 5.4.5
+- up: "target" es2017 -> ES2021
+- fix: primary keys
+- fix: primary indexes as keyname in column options (including multi-column primary keys)
+- fix: correct column names ending with _
+- fix: foreign key indexes as keyname in column options
+- fix: numeric_precision for data type "real"
+- fix: bigint and decima as number in a postgres driver
+- fix: correctly split indexes into @Unique and @Index
+- fix: use @PrimaryColumn (instead of @PrimaryGeneratedColumn) for non-generated primary keys
+- breaking change: lazy relation changed to Relation<>
+- feature: add checks from postgres (@Check)
+- feature: add all comments (from tables and columns) to options
+- feature: fake primary key for keyless entities (with auto-disabled "synchronize" options)
+- feature: add all relation columns to entity
+
 # typeorm-model-generator
 
 [![npm version](https://badge.fury.io/js/typeorm-model-generator.svg)](https://badge.fury.io/js/typeorm-model-generator)
