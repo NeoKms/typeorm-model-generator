@@ -236,14 +236,13 @@ function createHandlebarsHelpers(generationOptions: IGenerationOptions): void {
     );
     Handlebars.registerHelper("toPropertyName", (str) => {
         let retStr = "";
+        const customEnding = str[str.length - 1] === "_";
         switch (generationOptions.convertCaseProperty) {
             case "camel":
                 retStr = changeCase.camelCase(str);
                 break;
             case "pascal":
-                const customEnding = str[str.length - 1] === "_";
                 retStr = changeCase.pascalCase(str);
-                retStr = customEnding ? `${retStr}_` : retStr;
                 break;
             case "none":
                 retStr = str;
@@ -254,6 +253,7 @@ function createHandlebarsHelpers(generationOptions: IGenerationOptions): void {
             default:
                 throw new Error("Unknown case style");
         }
+        retStr = customEnding ? `${retStr}_` : retStr;
         return retStr;
     });
     Handlebars.registerHelper(
